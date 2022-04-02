@@ -1,0 +1,65 @@
+-- Data Qualiy Dimensio Queries
+
+--Review tables 
+
+SELECT * FROM CUSTOMER_ORDER;
+
+SELECT * FROM CUSTOMER;
+
+-- 1. Consistency compare 
+
+SELECT DISTINCT 
+    ORDR.CUSTOMER_ID "Customer ID",
+    CUST.FIRST_NAME||' '||CUST.LAST_NAME "Customer Name",
+    ORDR.CUSTOMER_PHONE "Customer Phone On Order Table",
+    CUST.PHONE_NUMBER "Customer Phone On Customer Table"
+FROM CUSTOMER_ORDER ORDR 
+JOIN CUSTOMER CUST 
+ON ORDR.CUSTOMER_ID = CUST.CUSTOMER_ID;
+
+-- 2. Uniqueness
+
+SELECT * FROM CUSTOMER;
+
+SELECT count(1) FROM CUSTOMER_ORDER;
+
+SELECT count(1) FROM CUSTOMER_ORDER WHERE CUSTOMER_ID IS NULL;
+
+SELECT count(1) FROM CUSTOMER_ORDER WHERE CUSTOMER_PHONE IS NULL;
+
+SELECT count(1) FROM CUSTOMER_ORDER WHERE ORDER_ID IS NULL;
+
+SELECT count(1) FROM CUSTOMER_ORDER WHERE ORDER_DATE IS NULL;
+
+SELECT count(1) FROM CUSTOMER_ORDER WHERE SALE_AMOUNT IS NULL;
+
+
+SELECT itemname, items.size FROM im.items group by itemname, items.size order by items.size desc  ;
+
+
+SELECT listingid,sellerid, productid, brand,listings.size, listingcreatedate, listingenddate
+FROM li.listings
+WHERE listingenddate is not null
+AND listingenddate < listingcreatedate;
+
+SELECT DISTINCT 
+    crrq.id "Customer ID",
+    CUST.firstname||' '||CUST.lastname "Customer Name",
+    crrq.email "Customer email On customerservicerequests Table",
+    CUST.email "Customer email On Users Table"
+FROM cs.customerservicerequests crrq 
+JOIN usr.users CUST 
+ON crrq.userid = CUST.userid;
+
+SELECT DISTINCT 
+    crrq.buyerid "Customer ID",
+    CUST.firstname||' '||CUST.lastname "Customer Name",
+    crrq.shippingaddress "Customer address On orders Table",
+    CUST.address "Customer address On Users Table"
+FROM op.orders crrq 
+JOIN usr.users CUST 
+ON crrq.buyerid = CUST.userid;
+
+select distinct * from li.listings where listingid in 
+( select listingid from (select listingid, count(*) from li.listings
+group by listingid HAVING count(*) > 1) as foo);
